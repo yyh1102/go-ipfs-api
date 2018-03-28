@@ -238,8 +238,7 @@ func TestObjectStat(t *testing.T) {
 func TestFindProvs(t *testing.T) {
 	is := is.New(t)
 	s := NewShell(shellUrl)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx, _ := context.WithTimeout(context.Background(),30*time.Second)
 
 	c, err := s.FindProvs(ctx, "Qme1g4e3m2SmdiSGGU3vSWmUStwUjc5oECnEriaK9Xa1HU")
 	is.Nil(err)
@@ -249,4 +248,42 @@ func TestFindProvs(t *testing.T) {
 	is.NotNil(p)
 	is.NotNil(p.ID)
 
+}
+
+func TestProvide(t *testing.T) {
+	is := is.New(t)
+	s := NewShell(shellUrl)
+	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+
+	err := s.Provide(ctx, "QmPbmdUe4gpn3EnY9RAxwnh9NtPkk3Vg8RJioGDMravDF8")
+	is.Nil(err)
+}
+
+func TestClearBootstrap(t *testing.T) {
+	is := is.New(t)
+	s := NewShell(shellUrl)
+	peers, err := s.ClearBootstrap()
+	is.Nil(err)
+	peers, err = s.ShowBootstrapList()
+	is.Equal(len(peers), 0)
+}
+
+func TestAddBootstrap(t *testing.T) {
+	is := is.New(t)
+	s := NewShell(shellUrl)
+	ipfsAddr := "/ip4/178.62.158.247/tcp/4001/ipfs/QmSoLer265NRgSp2LA3dPaeykiS1J6DifTC88f5uVQKNAd"
+	peers, err := s.AddBootstrapNode(ipfsAddr)
+	is.Nil(err)
+	is.Equal(peers[0], ipfsAddr)
+}
+
+func TestAddDefaultBootstrap(t *testing.T) {
+	is := is.New(t)
+	s := NewShell(shellUrl)
+	peers, err := s.AddDefaultBootstrap()
+	is.Nil(err)
+	is.NotEqual(len(peers), 0)
+	peers, err = s.ShowBootstrapList()
+	is.Nil(err)
+	is.NotEqual(len(peers), 0)
 }

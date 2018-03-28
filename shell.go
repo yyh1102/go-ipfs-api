@@ -459,6 +459,24 @@ func (s *Shell) FindProvs(ctx context.Context, cid string) (<-chan pstore.PeerIn
 	return outchan, nil
 }
 
+func (s *Shell) Provide(ctx context.Context, cid string) error {
+	resp, err := s.newRequest(ctx, "dht/provide", cid).Send(s.httpcli)
+	if err != nil {
+		return err
+	}
+
+	if resp.Error != nil {
+		return resp.Error
+	}
+
+	go func() {
+		<-ctx.Done()
+		resp.Close()
+	}()
+
+	return nil
+}
+
 func (s *Shell) Refs(hash string, recursive bool) (<-chan string, error) {
 	req := s.newRequest(context.Background(), "refs", hash)
 	if recursive {
