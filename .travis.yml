@@ -3,8 +3,11 @@ sudo: required
 language: go
 
 go:
-  - 1.7
+  - 1.8
   - tip
+
+env:
+  - IPFS_PATH=/tmp/ipfs
 
 matrix:
   allow_failures:
