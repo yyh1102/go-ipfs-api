@@ -17,11 +17,11 @@ import (
 
 	pstore "github.com/libp2p/go-libp2p-peerstore"
 	notif "github.com/libp2p/go-libp2p-routing/notifications"
-	files "github.com/ipfs/go-ipfs-cmdkit/files"
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/ipfs/go-ipfs-cmdkit/files"
+	"github.com/mitchellh/go-homedir"
 	ma "github.com/multiformats/go-multiaddr"
-	manet "github.com/multiformats/go-multiaddr-net"
-	tar "github.com/whyrusleeping/tar-utils"
+	"github.com/multiformats/go-multiaddr-net"
+	"github.com/whyrusleeping/tar-utils"
 )
 
 const (
@@ -274,7 +274,7 @@ func (s *Shell) AddDir(dir string) (string, error) {
 }
 
 const (
-	TRaw = iota
+	TRaw       = iota
 	TDirectory
 	TFile
 	TMetadata
@@ -415,7 +415,7 @@ func (s *Shell) FindPeer(peer string) (*PeerInfo, error) {
 func (s *Shell) FindProvs(ctx context.Context, cid string) (<-chan pstore.PeerInfo, error) {
 	ctx, cancel := context.WithCancel(ctx)
 
-	resp, err := s.newRequest("dht/findprovs", cid).Send(s.httpcli)
+	resp, err := s.newRequest(ctx, "dht/findprovs", cid).Send(s.httpcli)
 	if err != nil {
 		return nil, err
 	}
